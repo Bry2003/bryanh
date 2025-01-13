@@ -1,0 +1,3 @@
+baseURL = "http://localhost:1313/"
+theme = 'hugo-theme-console-master'
+title = 'bryan corporation'
