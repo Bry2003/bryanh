@@ -1,0 +1,7 @@
+<div class="product">
+    <img src="{{ .Params.image }}" alt="{{ .Title }}">
+    <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+    <p>{{ .Params.details }}</p>
+    <p class="price">{{ .Params.price }}</p>
+    <a href="{{ .Permalink }}" class="details-button">View Details</a>
+</div>

@@ -1,0 +1,8 @@
+{{ define "main" }}
+<div class="product-details">
+    <h1>{{ .Title }}</h1>
+    <img src="{{ .Params.image }}" alt="{{ .Title }}">
+    <p>{{ .Params.details }}</p>
+    <p class="price">{{ .Params.price }}</p>
+</div>
+{{ end }}

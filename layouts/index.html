@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopcart</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #004d00;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        header a:hover {
+            color: #00ff00;
+        }
+
+        header .cart-summary {
+            background: #006600;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .banner {
+            background: url('https://static.vecteezy.com/system/resources/thumbnails/002/070/892/small/abstract-banner-design-template-black-glossy-with-gold-line-and-lighting-effect-on-dark-background-and-texture-vector.jpg') center/cover no-repeat;
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .banner h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 50px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .product {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .product img {
+            max-width: 100%;
+            height: auto;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+.product-info {
+    padding: 20px;  /* Add some padding for a cleaner look */
+    text-align: center;
+}
+
+.product-info h3 {
+    font-size: 18px;  /* This remains fine for readability */
+    color: #333;
+    margin: 10px 0;
+}
+
+.product-info .price {
+    color: #006600;
+    font-weight: bold;
+    font-size: 18px;  /* Make the price text a little bigger */
+    margin: 1px 0;
+}
+
+
+        .product-info button {
+            background: #004d00;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .product-info button:hover {
+            background: #006600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #004d00;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            width: 40%;
+            max-width: 400px;
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.0);
+        }
+
+        .modal h2 {
+            margin: 0 0 10px;
+        }
+
+        .modal p {
+            margin: 0 0 20px;
+        }
+
+        .modal .close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        /* Toast Notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin: 0 auto;
+            background-color: #004d00;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            padding: 10px;
+            position: fixed;
+            z-index: 1000;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            transition: visibility 0.5s ease, bottom 0.5s ease;
+        }
+
+        .toast.show {
+            visibility: visible;
+            bottom: 50px;
+        }
+
+        /* Login/Register Form Styles */
+        .form-input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-button {
+            background: #004d00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .form-button:hover {
+            background: #006600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>Shopcart</div>
+        <nav>
+            <a href="#" onclick="showHome()">Home</a>
+            <a href="#" onclick="showCategories()">Categories</a>
+            <a href="#" onclick="showAccount()">Account</a>
+            <a href="#" class="cart-summary">Cart (<span id="cart-count">0</span>)</a>
+        </nav>
+    </header>
+
+    <div class="banner">
+        <h1>Grab the Best Deals on Headphones!</h1>
+    </div>
+
+    <section class="products" id="product-section">
+        <!-- Product items here -->
+    </section>
+
+    <footer>
+        &copy; 2025 Shopcart. All Rights Reserved.
+    </footer>
+
+    <div class="overlay"></div>
+    <div class="modal" id="cart-summary-modal">
+        <button class="close" onclick="closeModal()">&times;</button>
+        <h2>Cart Summary</h2>
+        <div id="cart-items"></div>
+        <p><strong>Total:</strong> $<span id="cart-total">0.00</span></p>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <button class="close" onclick="closeLoginModal()">&times;</button>
+        <h2>Login</h2>
+        <form onsubmit="loginUser(event)">
+            <input type="text" id="login-username" class="form-input" placeholder="Username" required><br>
+            <input type="password" id="login-password" class="form-input" placeholder="Password" required><br>
+            <button type="submit" class="form-button">Login</button>
+        </form>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="register-modal">
+        <button class="close" onclick="closeRegisterModal()">&times;</button>
+        <h2>Register</h2>
+        <form onsubmit="registerUser(event)">
+            <input type="text" id="register-username" class="form-input" placeholder="Username" required><br>
+            <input type="password" id="register-password" class="form-input" placeholder="Password" required><br>
+            <input type="password" id="register-confirm-password" class="form-input" placeholder="Confirm Password" required><br>
+            <button type="submit" class="form-button">Register</button>
+        </form>
+    </div>
+
+    <script>
+        const cart = [];
+        let currentUser = null;
+
+        function addToCart(productName, productPrice) {
+            cart.push({ name: productName, price: productPrice });
+            document.getElementById('cart-count').textContent = cart.length;
+
+            // Toast Notification
+            showToast(`${productName} has been added to the cart.`);
+
+            // Update Cart Summary
+            updateCart();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            setTimeout(() => toast.className = toast.className.replace('show', ''), 3000);
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            cartItems.innerHTML = cart.map(item => `<p>${item.name} - $${item.price}</p>`).join('');
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        function closeModal() {
+            document.querySelector('.modal').style.display = 'none';
+            document.querySelector('.overlay').style.display = 'none';
+        }
+
+        document.querySelector('.cart-summary').addEventListener('click', () => {
+            document.querySelector('.modal').style.display = 'block';
+            document.querySelector('.overlay').style.display = 'block';
+        });
+
+        function showHome() {
+            document.getElementById('product-section').innerHTML = `
+                <section class="products">
+        <div class="product" data-id="1">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEtulKQklBGWxsiYRIVEAjeG2qZO-7tKoHnw&s" alt="Product 1">
+            <div class="product-info">
+                <h3>Wireless Earbuds</h3>
+                <p class="price">$89.00</p>
+                <button onclick="addToCart('Wireless Earbuds', 89)">Add to Cart</button>
+            </div>
+        </div>
+                </div>
+                <div class="product" data-id="2">
+                    <img src="https://eleksis.com/wp-content/uploads/2023/10/SF_PDP_GALLERY_BLACK-1.png" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Bose QuietComfort Ultra Wireless Earbuds</h3>
+                        <p class="price">$100.00</p>
+                        <button onclick="addToCart('Bose QuietComfort Ultra Wireless Earbuds', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcwe48dy0S1mpZEbB4fSQlSOC7sb3nwRnnuA&s" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Nothing Phone Ear Wireless Earphones</h3>
+                        <p class="price">$120.00</p>
+                        <button onclick="addToCart('Nothing Phone Ear Wireless Earphones', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://sony.scene7.com/is/image/sonyglobalsolutions/Primary_image_black?$categorypdpnav$&fmt=png-alpha" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Sony WF-1000XM5 Wireless Noise Canceling Earbuds</h3>
+                        <p class="price">$12450.00</p>
+                        <button onclick="addToCart('Sony WF-1000XM5 Wireless Noise Canceling Earbuds', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://m.media-amazon.com/images/I/61BebNC2y8L._AC_SL1500_.jpg" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Bose QuietComfort Earbuds II</h3>
+                        <p class="price">$12089.00</p>
+                        <button onclick="addToCart('Bose QuietComfort Earbuds II', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvsbMSq6OGAmo_9aSm27SfvQya5O4Ho3kBgw&s" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Bluetooth Headphones</h3>
+                        <p class="price">$1205.00</p>
+                        <button onclick="addToCart('Bluetooth Headphones', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://api.myearfun.com/image/media_coverage/514yjaidumq.jpg" alt="Product 2">
+                    <div class="product-info">
+                        <h3>EarFun Air Pro 4</h3>
+                        <p class="price">$1520.00</p>
+                        <button onclick="addToCart('EarFun Air Pro 4', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJYD3P20N9F3KpHYABL0IvFj-AJ4Pn9FdcUw&s" alt="Product 2">
+                    <div class="product-info">
+                        <h3>aur fun earphone pro</h3>
+                        <p class="price">$1240.00</p>
+                        <button onclick="addToCart('aur fun earphone pro', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkIVLftdJYLfM9AHVjWgBSns7Kr1YEoVfJYQ&s" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Samsung Galaxy Buds2 Pro True Wireless</h3>
+                        <p class="price">$1800.00</p>
+                        <button onclick="addToCart('Samsung Galaxy Buds2 Pro True Wireless', 120)">Add to Cart</button>
+                    </div>
+                </div>
+                  </div>
+                <div class="product" data-id="2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRFDySpuhZfkdyAE0Irw667k99NegMCVRYUg&s" alt="Product 2">
+                    <div class="product-info">
+                        <h3>Sennheiser Momentum True Wireless 4 Earbuds</h3>
+                        <p class="price">$190.00</p>
+                        <button onclick="addToCart('Sennheiser Momentum True Wireless 4 Earbuds', 120)">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showCategories() {
+            document.getElementById('product-section').innerHTML = `
+                <p>Browse categories to find the perfect products for you!</p>
+            `;
+        }
+
+        function showAccount() {
+            if (currentUser) {
+                document.getElementById('product-section').innerHTML = `
+                    <p>Welcome, ${currentUser}!</p>
+                    <button onclick="logoutUser()">Logout</button>
+                `;
+            } else {
+                document.getElementById('product-section').innerHTML = `
+                    <button onclick="openLoginModal()">Login</button>
+                    <button onclick="openRegisterModal()">Register</button>
+                `;
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById('login-modal').style.display = 'block';
+            document.querySelector('.overlay').style.display = 'block';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').style.display = 'none';
+            document.querySelector('.overlay').style.display = 'none';
+        }
+
+        function openRegisterModal() {
+            document.getElementById('register-modal').style.display = 'block';
+            document.querySelector('.overlay').style.display = 'block';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('register-modal').style.display = 'none';
+            document.querySelector('.overlay').style.display = 'none';
+        }
+
+        function loginUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            // In a real app, this would check the credentials against a server
+            if (username === 'test' && password === 'password') {
+                currentUser = username;
+                showAccount();
+                closeLoginModal();
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        function registerUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            // In a real app, this would send data to the server
+            currentUser = username;
+            alert('Registration successful!');
+            closeRegisterModal();
+            showAccount();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            showAccount();
+        }
+
+        // Initial page load
+        showHome();
+    </script>
+</body>
+</html>
